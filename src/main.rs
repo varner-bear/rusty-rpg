@@ -4,7 +4,6 @@ use amethyst::prelude::*;
 use amethyst::input::{is_close_requested, is_key_down}; 
 use amethyst::renderer::{DisplayConfig, DrawFlat, Event, Pipeline, PosNormTex,
                          RenderBundle, Stage, VirtualKeyCode};
-
 struct Example;
 
 impl<'a, 'b> State<GameData<'a, 'b>> for Example {
@@ -26,8 +25,7 @@ fn main() -> Result<(), amethyst::Error> {
     amethyst::start_logger(Default::default());
 
     let path = format!(
-        "{}/resources/display_config.ron",
-        env!("CARGO_MANIFEST_DIR")
+        "./resources/display_config.ron",
     );
     let config = DisplayConfig::load(&path);
 
