@@ -1,6 +1,8 @@
 # Target folder
 target/
 
+# SDL dll files
+/*.dll
 
 # Windows thumbnail cache files
 Thumbs.db
