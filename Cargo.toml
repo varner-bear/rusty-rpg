@@ -5,3 +5,4 @@ authors = []
 build = "build.rs"
 [dependencies]
 ggez = "0.4"
+specs = "0.12.1"
