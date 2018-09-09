@@ -4,5 +4,4 @@ version = "0.1.0"
 authors = []
 build = "build.rs"
 [dependencies]
-ggez = "0.4"
-specs = "0.12.1"
+sdl2 = "0.31.0"
