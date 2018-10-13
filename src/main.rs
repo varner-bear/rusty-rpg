@@ -11,26 +11,40 @@ use ggez::timer;
 use std::env;
 use std::path;
 
+use specs::{Builder,Component,World,System,RunNow};
+
+
+// Modules that define content
+mod components;
+mod systems;
+
+
+// MainState Definition
 struct MainState {
     text: graphics::Text,
     //canvas: graphics::Canvas,
     image: graphics::Image,
     point: graphics::Point2,
     frames: usize,
+    world: specs::World,
     //draw_with_canvas: bool,
     //spritebatch: graphics::spritebatch::SpriteBatch,
 }
 
-impl MainState {
 
+impl MainState {
     /* Creates a new main state from a given context - look into return type*/
     fn new(ctx: &mut Context) -> GameResult<MainState> {
+        // creates a world and registeres the position component to it - a system can now act on
+        // it - How do we get the data to use?
+        let mut world = World::new();
+        world.register::<components::Position> ();
         /* Figure out what is going on here with the contexts */
         let font = graphics::Font::new(ctx, "/DejaVuSerif.ttf", 48)?;
         let text = graphics::Text::new(ctx, "Hello World!", &font)?;
         //let canvas = graphics::Canvas::with_window_size(ctx)?;
-       let image = graphics::Image::new(ctx,"/tile.png").unwrap();
-       let point = graphics::Point2::new(50.0,50.0);
+        let image = graphics::Image::new(ctx,"/tile.png").unwrap();
+        let point = graphics::Point2::new(50.0,50.0);
        //let batch = graphics::spritebatch::SpriteBatch::new(image);
 
         let s = MainState {
@@ -40,6 +54,7 @@ impl MainState {
             point,
             /*draw_with_canvas : false,*/
             frames: 0,
+            world,
             //spritebatch: batch,
         };
         Ok(s)   /* what does this do? */
@@ -48,14 +63,19 @@ impl MainState {
 
 impl event::EventHandler for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+        //self.world.assest
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult <()> {
         let dest_point = graphics::Point2::new(10.0, 10.0);
         graphics::set_canvas(ctx, None);
+
+        // sets background color
         graphics::set_background_color(ctx, graphics::Color::from((64,64,0,0)));
         graphics::clear(ctx);
+
+        // writes text to screen
         graphics::draw_ex(
             ctx,
             &self.text,
@@ -65,7 +85,7 @@ impl event::EventHandler for MainState {
                 ..Default::default()
             },
         )?;
-
+        // draws a circle at a fixed point
         graphics::circle(
             ctx,
             graphics::DrawMode::Fill,
@@ -73,6 +93,8 @@ impl event::EventHandler for MainState {
             100.0,
             0.1,
         )?;
+
+        // draws the loaded image at a variable point
         graphics::draw_ex(
             ctx,
             &self.image,
@@ -82,7 +104,7 @@ impl event::EventHandler for MainState {
                 
             },
         )?;
-
+        // displays FPS in console - work into display in a corner at some point
         graphics::present(ctx); 
         self.frames += 1;
         if (self.frames % 100) == 0 {
@@ -105,6 +127,7 @@ impl event::EventHandler for MainState {
         self.point = graphics::Point2::new(x as f32,y as f32);
     }
 }
+
 pub fn main() {
     println!("Hello World! Starting Main!");
     let c = conf::Conf { /*create a new Conf - we can later load a config*/
@@ -114,21 +137,28 @@ pub fn main() {
         },
         ..Default::default()
     };
-/*create a new context*/
-   let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
-   /*println!("Default path: {:#?}", ctx.filesystem);*/
-   /*Adds resources folder in project dir to filesystem roots*/
-   if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
+    /*create a new context*/
+    let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
+    /*println!("Default path: {:#?}", ctx.filesystem);*/
+    /*Adds resources folder in project dir to filesystem roots*/
+    if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
     let mut path = path::PathBuf::from(manifest_dir);
     path.push("resources");
     ctx.filesystem.mount(&path,true);
     /*println!("Default path: {:#?}", ctx.filesystem);*/
-   }
+    }
 
-   let state = &mut MainState::new(ctx).unwrap();
-   if let Err(e) = event::run(ctx,state){
+    let state = &mut MainState::new(ctx).unwrap();
+    //creates a new entity in the system
+    state.world.create_entity().with(components::Position {x: 1.0, y: 7.0}).build();
+
+    let mut test_system = systems::TestSystem;
+    test_system.run_now(&state.world.res);
+
+     // Actually starts the game loop 
+    if let Err(e) = event::run(ctx,state){
     println!("Error encountered:{}",e);
-   } else {
+    } else {
     println!("Game exited cleanly.");
-   }
+    }
 }
