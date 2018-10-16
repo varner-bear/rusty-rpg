@@ -18,7 +18,7 @@ use specs::{Builder,Component,World,System,RunNow};
 mod components;
 mod systems;
 mod state_stack;
-mod states;
+mod scene_state;
 
 // MainState Definition
 struct MainState {
