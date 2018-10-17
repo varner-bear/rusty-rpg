@@ -31,6 +31,7 @@ impl TestState {
 impl State<World, i32> for TestState {
     fn update(&mut self, world_ctx: &mut World) -> MyStateStackOp {
         //self.dispatcher.dispatch(&mut world_ctx.specs_world.res);
+        //println!("Updated TestState!");
         StateStackOp::None
     }
 

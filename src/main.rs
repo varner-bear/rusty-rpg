@@ -27,7 +27,10 @@ struct MainState {
     image: graphics::Image,
     point: graphics::Point2,
     frames: usize,
-    world: specs::World,
+    // Permanent Members
+    // Refactor specs world into a world struct
+    //world: specs::World,
+    states: scene_state::MyStateStack,
     //draw_with_canvas: bool,
     //spritebatch: graphics::spritebatch::SpriteBatch,
 }
@@ -36,10 +39,16 @@ struct MainState {
 impl MainState {
     /* Creates a new main state from a given context - look into return type*/
     fn new(ctx: &mut Context) -> GameResult<MainState> {
+    //fn new(ctx: &mut Context) -> Self{
         // creates a world and registeres the position component to it - a system can now act on
         // it - How do we get the data to use?
         let mut world = World::new();
-        world.register::<components::Position> ();
+        // Moves the world to the statestack
+        let mut statestack = scene_state::MyStateStack::new(world);
+        let initial_state = Box::new(scene_state::TestState::new(ctx,&mut statestack.world));
+        statestack.push(initial_state);
+        // the MainState no longer owns the world
+        //world.register::<components::Position> ();
         /* Figure out what is going on here with the contexts */
         let font = graphics::Font::new(ctx, "/DejaVuSerif.ttf", 48)?;
         let text = graphics::Text::new(ctx, "Hello World!", &font)?;
@@ -55,7 +64,8 @@ impl MainState {
             point,
             /*draw_with_canvas : false,*/
             frames: 0,
-            world,
+            //world,
+            states: statestack,
             //spritebatch: batch,
         };
         Ok(s)   /* what does this do? */
@@ -63,8 +73,14 @@ impl MainState {
 }
 
 impl event::EventHandler for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        //self.world.assest
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        const DESIRED_FPS: u32 = 60;
+        while timer::check_update_time(ctx, DESIRED_FPS){
+            self.states.update();
+        }
+        // Implement to sync everything up after an update
+        // will require world module and additons
+        //self.states.world.assests.sync(ctx);
         Ok(())
     }
 
@@ -149,15 +165,15 @@ pub fn main() {
     /*println!("Default path: {:#?}", ctx.filesystem);*/
     }
 
-    let state = &mut MainState::new(ctx).unwrap();
+    let main_state = &mut MainState::new(ctx).unwrap();
     //creates a new entity in the system
-    state.world.create_entity().with(components::Position {x: 1.0, y: 7.0}).build();
+    //state.world.create_entity().with(components::Position {x: 1.0, y: 7.0}).build();
 
-    let mut test_system = systems::TestSystem;
-    test_system.run_now(&state.world.res);
+    //let mut test_system = systems::TestSystem;
+    //test_system.run_now(&state.world.res);
 
      // Actually starts the game loop 
-    if let Err(e) = event::run(ctx,state){
+    if let Err(e) = event::run(ctx,main_state){
     println!("Error encountered:{}",e);
     } else {
     println!("Game exited cleanly.");
