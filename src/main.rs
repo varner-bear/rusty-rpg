@@ -18,7 +18,9 @@ use specs::{Builder,Component,World,System,RunNow};
 mod components;
 mod systems;
 mod layer_stack;
-mod test_layer;
+mod layers;
+
+//use layers::test_layer;
 
 // MainState Definition
 struct MainState {
@@ -30,7 +32,7 @@ struct MainState {
     // Permanent Members
     // Refactor specs world into a world struct
     //world: specs::World,
-    layers: test_layer::MyLayerStack,
+    layers: layers::MyLayerStack,
     //draw_with_canvas: bool,
     //spritebatch: graphics::spritebatch::SpriteBatch,
 }
@@ -44,8 +46,8 @@ impl MainState {
         // it - How do we get the data to use?
         let mut world = World::new();
         // Moves the world to the layer_stack
-        let mut layerstack = test_layer::MyLayerStack::new(world);
-        let initial_layer = Box::new(test_layer::TestLayer::new(ctx,&mut layerstack.world));
+        let mut layerstack = layers::MyLayerStack::new(world);
+        let initial_layer = Box::new(layers::test_layer::TestLayer::new(ctx,&mut layerstack.world));
         layerstack.push(initial_layer);
         // the MainState no longer owns the world
         //world.register::<components::Position> ();

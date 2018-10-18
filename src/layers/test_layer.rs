@@ -3,8 +3,9 @@ use specs::{self,Join,World};
 //mod systems;
 //mod layer_stack;
 
-use super::layer_stack::*;
-use super::systems::TestSystem;
+//use super::layer_stack::*;
+use layer_stack::*;
+use systems::TestSystem;
 
 pub type MyLayerStackOp = LayerStackOp<World, i32>;
 pub type MyLayerStack = LayerStack<World, i32>;
