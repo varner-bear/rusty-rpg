@@ -17,8 +17,8 @@ use specs::{Builder,Component,World,System,RunNow};
 // Modules that define content
 mod components;
 mod systems;
-mod state_stack;
-mod scene_state;
+mod layer_stack;
+mod test_layer;
 
 // MainState Definition
 struct MainState {
@@ -30,23 +30,23 @@ struct MainState {
     // Permanent Members
     // Refactor specs world into a world struct
     //world: specs::World,
-    states: scene_state::MyStateStack,
+    layers: test_layer::MyLayerStack,
     //draw_with_canvas: bool,
     //spritebatch: graphics::spritebatch::SpriteBatch,
 }
 
 
 impl MainState {
-    /* Creates a new main state from a given context - look into return type*/
+    /* Creates a new main layer from a given co:ntext - look into return type*/
     fn new(ctx: &mut Context) -> GameResult<MainState> {
     //fn new(ctx: &mut Context) -> Self{
         // creates a world and registeres the position component to it - a system can now act on
         // it - How do we get the data to use?
         let mut world = World::new();
-        // Moves the world to the statestack
-        let mut statestack = scene_state::MyStateStack::new(world);
-        let initial_state = Box::new(scene_state::TestState::new(ctx,&mut statestack.world));
-        statestack.push(initial_state);
+        // Moves the world to the layer_stack
+        let mut layerstack = test_layer::MyLayerStack::new(world);
+        let initial_layer = Box::new(test_layer::TestLayer::new(ctx,&mut layerstack.world));
+        layerstack.push(initial_layer);
         // the MainState no longer owns the world
         //world.register::<components::Position> ();
         /* Figure out what is going on here with the contexts */
@@ -65,7 +65,7 @@ impl MainState {
             /*draw_with_canvas : false,*/
             frames: 0,
             //world,
-            states: statestack,
+            layers: layerstack,
             //spritebatch: batch,
         };
         Ok(s)   /* what does this do? */
@@ -76,11 +76,11 @@ impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const DESIRED_FPS: u32 = 60;
         while timer::check_update_time(ctx, DESIRED_FPS){
-            self.states.update();
+            self.layers.update();
         }
         // Implement to sync everything up after an update
         // will require world module and additons
-        //self.states.world.assests.sync(ctx);
+        //self.layers.world.assests.sync(ctx);
         Ok(())
     }
 
