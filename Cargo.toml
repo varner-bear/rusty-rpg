@@ -6,3 +6,7 @@ build = "build.rs"
 [dependencies]
 ggez = "0.4"
 specs = "0.12.1"
+warmy = "0.10.0"
+
+# Utility testing
+failure = "0.1"

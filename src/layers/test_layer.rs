@@ -1,12 +1,14 @@
 use ggez;
 use ggez::graphics;
 use specs::{self,Join,World};
+use warmy;
 //mod systems;
 //mod layer_stack;
 
 //use super::layer_stack::*;
 use layer_stack::*;
 use layers::*;
+use resources;
 use systems::TestSystem;
 
 
@@ -14,6 +16,7 @@ pub struct TestLayer{
     dispatcher: specs::Dispatcher<'static, 'static>,
     image: graphics::Image,
     map: graphics::Image,
+    map2: warmy::Res<resources::Image>,
 }
 
 impl TestLayer {
@@ -21,10 +24,17 @@ impl TestLayer {
         let dispatcher = Self::register_systems();
         let image = graphics::Image::new(ggez_ctx,"/tile.png").unwrap();
         let map = graphics::Image::new(ggez_ctx,"/test_map.jpg").unwrap();
+        
+        
+        let opt = warmy::StoreOpt::default();
+        let mut store = warmy::Store::new(opt).expect("Could not create store");
+        // following causes a panic on loading -> Figure out what path warmy actually wants
+        //let map2 = store.get::<_, resources::Image> (&warmy::FSKey::new("/resources/test_map.jpg"), ggez_ctx).unwrap();
         TestLayer {
             dispatcher,
             image,
             map,
+            map2,
         }   
     }
     fn register_systems() -> specs::Dispatcher<'static, 'static>{

@@ -1,5 +1,7 @@
 extern crate ggez;
 extern crate specs;
+extern crate warmy;
+extern crate failure;
 
 use ggez::conf;
 /*use ggez::event;*/
@@ -19,6 +21,7 @@ mod components;
 mod systems;
 mod layer_stack;
 mod layers;
+mod resources;
 
 //use layers::test_layer;
 

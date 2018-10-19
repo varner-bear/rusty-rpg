@@ -11,6 +11,8 @@
 */
 
 use ggez;
+use warmy;
+use resources;
 
 /// Layer Trait to be implemented for our various game layers in terms of a
 /// common context and input type
@@ -60,13 +62,19 @@ impl<C, I> LayerStackOp<C, I> {
 pub struct LayerStack<C, I> {
     pub world: C,
     layers: Vec<Box<Layer<C,I>>>,
+    // maybe transition to world unless we want separate stores for each Layer
+    pub assets: warmy::Store<ggez::Context>,
 }
 
 impl<C, I> LayerStack<C, I> {
     pub fn new(world_ctx: C) -> Self {
+        // may need to modify the path? 
+        let opt = warmy::StoreOpt::default();
+        let store = warmy::Store::new(opt).expect("Could not create store");
         LayerStack{
             world: world_ctx,
             layers: Vec::new(),
+            assets: store,
         }
     }
     
