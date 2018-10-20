@@ -12,7 +12,9 @@ use ggez::timer;
 /*use ggez::filesystem;*/
 use std::env;
 use std::path;
+//use std::io::prelude;
 use std::io::{self,Write};
+use std::fs::File;
 use specs::{Builder,Component,World,System,RunNow};
 
 
@@ -158,6 +160,9 @@ impl event::EventHandler for MainState {
 pub fn main() -> std::io::Result<()> {
     println!("Hello World! Starting Main!");
     // Creates a new configuration which will be used by our context
+    
+    let c_builder = ggez::ContextBuilder::new("rusty-rpg", "varneryo")
+        .with_conf_file(true);
     let c = conf::Conf { /*create a new Conf - we can later load a config*/
         window_setup: conf::WindowSetup {
             title: "Varner's RPG Engine".to_owned(),
@@ -168,13 +173,21 @@ pub fn main() -> std::io::Result<()> {
         },
         ..Default::default()
     };
-    //let mut f = std::fs::File::open("conf.toml")?;
-    //f.write_all(b"Hello World!")?;
+    //let mut f = std::fs::File::create("conf.toml")?;
+    //f.write(b"some bytes!")?;
+    //let meta = f.metadata()?;
+    //println!("Permission: {:?}",meta.permissions().readonly());
+    //let mut perms = meta.permissions();
+    //perms.set_readonly(false);
+    //std::fs::set_permissions("Conf.toml",perms)?;
+
+    //println!("Permission: {:?}",meta.permissions().readonly());
+
     //let x = c.to_toml_file(&mut f).unwrap();
     // build an example toml file and go from there?
     /*create a new context from the configuration*/
-    let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
-    
+    //let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
+    let ctx = &mut c_builder.build().unwrap(); 
     /*Adds resources folder in project dir to filesystem roots*/
     if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
     let mut path = path::PathBuf::from(manifest_dir);
