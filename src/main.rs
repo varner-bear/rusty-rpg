@@ -12,7 +12,7 @@ use ggez::timer;
 /*use ggez::filesystem;*/
 use std::env;
 use std::path;
-
+use std::io::{self,Write};
 use specs::{Builder,Component,World,System,RunNow};
 
 
@@ -155,8 +155,9 @@ impl event::EventHandler for MainState {
     }
 }
 
-pub fn main() {
+pub fn main() -> std::io::Result<()> {
     println!("Hello World! Starting Main!");
+    // Creates a new configuration which will be used by our context
     let c = conf::Conf { /*create a new Conf - we can later load a config*/
         window_setup: conf::WindowSetup {
             title: "Varner's RPG Engine".to_owned(),
@@ -167,13 +168,18 @@ pub fn main() {
         },
         ..Default::default()
     };
-    /*create a new context*/
+    //let mut f = std::fs::File::open("conf.toml")?;
+    //f.write_all(b"Hello World!")?;
+    //let x = c.to_toml_file(&mut f).unwrap();
+    // build an example toml file and go from there?
+    /*create a new context from the configuration*/
     let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
-    /*println!("Default path: {:#?}", ctx.filesystem);*/
+    
     /*Adds resources folder in project dir to filesystem roots*/
     if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
     let mut path = path::PathBuf::from(manifest_dir);
     path.push("resources");
+    // Probably want to switch over to CB so we don't have to mount the filesystem
     ctx.filesystem.mount(&path,true);
     /*println!("Default path: {:#?}", ctx.filesystem);*/
     }
@@ -191,4 +197,6 @@ pub fn main() {
     } else {
     println!("Game exited cleanly.");
     }
+
+    Ok(())
 }
