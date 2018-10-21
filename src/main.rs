@@ -164,7 +164,14 @@ pub fn main() -> std::io::Result<()> {
     
     let mut c_builder = ggez::ContextBuilder::new("rusty-rpg", "Varner")
         .with_conf_file(true);
-    let c = conf::Conf { /*create a new Conf - we can later load a config*/
+
+    let mut f = std::fs::File::open("conf.toml")?;
+    //let conf = conf::Conf::from_toml_file(&mut f);
+
+    let conf = match conf::Conf::from_toml_file(&mut f) {
+        Ok(c) => c,
+        Err(e) => conf::Conf {
+    //let c = conf::Conf { /*create a new Conf - we can later load a config*/
         window_setup: conf::WindowSetup {
             title: "Varner's RPG Engine".to_owned(),
             icon: "".to_owned(), // Put something cool here eventually
@@ -173,6 +180,7 @@ pub fn main() -> std::io::Result<()> {
             ..Default::default()
         },
         ..Default::default()
+        }
     };
 
     // Can't get this working? Unsure if we even want to try to read from the config
@@ -180,8 +188,6 @@ pub fn main() -> std::io::Result<()> {
     //let config = fs.read_config().unwrap();
 
 
-    let mut f = std::fs::File::open("conf.toml")?;
-    let conf = conf::Conf::from_toml_file(&mut f);
     //f.write(b"some bytes!")?;
     //let meta = f.metadata()?;
     //println!("Permission: {:?}",meta.permissions().readonly());
@@ -198,10 +204,10 @@ pub fn main() -> std::io::Result<()> {
     // possibly specify our own default in another function (or just main) if it fails to load or
     // parse the file
     // i.e. let conf = match (conf from file call)
-    match conf {
-        Ok(r) => println!("Did it! {:?}",r),
-        Err(e) => println!("Nope!"),
-    }
+    //match conf {
+        //Ok(r) => println!("Did it! {:?}",r),
+        //Err(e) => println!("Nope!"),
+    //}
     let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",conf).unwrap();
    
     // Add CARGO_MANIFEST_DIR/resources to the filesystem path for context building and warmy
