@@ -6,7 +6,8 @@ extern crate failure;
 use ggez::conf;
 /*use ggez::event;*/
 use ggez::graphics;
-use ggez::{Context, GameResult,};
+use ggez::{Context, GameResult};
+use ggez::filesystem::Filesystem;
 use ggez::event::{self, Axis, Button, Keycode, Mod, MouseButton, MouseState};
 use ggez::timer;
 /*use ggez::filesystem;*/
@@ -161,7 +162,7 @@ pub fn main() -> std::io::Result<()> {
     println!("Hello World! Starting Main!");
     // Creates a new configuration which will be used by our context
     
-    let c_builder = ggez::ContextBuilder::new("rusty-rpg", "varneryo")
+    let mut c_builder = ggez::ContextBuilder::new("rusty-rpg", "Varner")
         .with_conf_file(true);
     let c = conf::Conf { /*create a new Conf - we can later load a config*/
         window_setup: conf::WindowSetup {
@@ -173,7 +174,14 @@ pub fn main() -> std::io::Result<()> {
         },
         ..Default::default()
     };
-    //let mut f = std::fs::File::create("conf.toml")?;
+
+    // Can't get this working? Unsure if we even want to try to read from the config
+    //let mut fs = Filesystem::new("rusty-rpg","Varner")?;
+    //let config = fs.read_config().unwrap();
+
+
+    let mut f = std::fs::File::open("conf.toml")?;
+    let conf = conf::Conf::from_toml_file(&mut f);
     //f.write(b"some bytes!")?;
     //let meta = f.metadata()?;
     //println!("Permission: {:?}",meta.permissions().readonly());
@@ -185,17 +193,44 @@ pub fn main() -> std::io::Result<()> {
 
     //let x = c.to_toml_file(&mut f).unwrap();
     // build an example toml file and go from there?
-    /*create a new context from the configuration*/
-    //let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",c).unwrap();
-    let ctx = &mut c_builder.build().unwrap(); 
-    /*Adds resources folder in project dir to filesystem roots*/
-    if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
-    let mut path = path::PathBuf::from(manifest_dir);
-    path.push("resources");
-    // Probably want to switch over to CB so we don't have to mount the filesystem
-    ctx.filesystem.mount(&path,true);
-    /*println!("Default path: {:#?}", ctx.filesystem);*/
+    
+    // this matches correctly, need to figure out how to convert this into a usable conf
+    // possibly specify our own default in another function (or just main) if it fails to load or
+    // parse the file
+    // i.e. let conf = match (conf from file call)
+    match conf {
+        Ok(r) => println!("Did it! {:?}",r),
+        Err(e) => println!("Nope!"),
     }
+    let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",conf).unwrap();
+   
+    // Add CARGO_MANIFEST_DIR/resources to the filesystem path for context building and warmy
+    // conf.toml stored in the resouce directory for context building
+    
+    /*Adds resources folder in project dir to filesystem roots*/
+    let cargo_path: Option<path::PathBuf> =
+        option_env!("CARGO_MANIFEST_DIR").map(|env_path|{
+           let mut res_path = path::PathBuf::from(env_path);
+           res_path.push("resources");
+           res_path
+        });
+    // unwrap the path and add it to the context builder
+    if let Some(ref s) = cargo_path {
+        //c_builder = c_builder.add_resource_path(s);
+        ctx.filesystem.mount(s,true);
+    }
+        
+        
+        
+    //if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
+    
+    //let mut path = path::PathBuf::from(manifest_dir);
+    //path.push("resources");
+    //c_builder = c_builder.add_resource_path(path);
+    
+    // Probably want to switch over to CB so we don't have to mount the filesystem
+    //let ctx = &mut c_builder.build().unwrap(); 
+    /*println!("Default path: {:#?}", ctx.filesystem);*/
 
     let main_state = &mut MainState::new(ctx).unwrap();
     //creates a new entity in the system
