@@ -25,6 +25,7 @@ mod systems;
 mod layer_stack;
 mod layers;
 mod resources;
+mod world;
 
 //use layers::test_layer;
 
@@ -164,14 +165,14 @@ pub fn main() -> std::io::Result<()> {
     
     let mut c_builder = ggez::ContextBuilder::new("rusty-rpg", "Varner")
         .with_conf_file(true);
-
-    let mut f = std::fs::File::open("conf.toml")?;
+    // Attempts to open the conf.toml
+    let mut f = std::fs::File::open("resources/conf.toml")?;
     //let conf = conf::Conf::from_toml_file(&mut f);
-
+    
+    // Either use the loaded file or the default settings below
     let conf = match conf::Conf::from_toml_file(&mut f) {
         Ok(c) => c,
         Err(e) => conf::Conf {
-    //let c = conf::Conf { /*create a new Conf - we can later load a config*/
         window_setup: conf::WindowSetup {
             title: "Varner's RPG Engine".to_owned(),
             icon: "".to_owned(), // Put something cool here eventually
@@ -182,70 +183,35 @@ pub fn main() -> std::io::Result<()> {
         ..Default::default()
         }
     };
-
-    // Can't get this working? Unsure if we even want to try to read from the config
-    //let mut fs = Filesystem::new("rusty-rpg","Varner")?;
-    //let config = fs.read_config().unwrap();
-
-
-    //f.write(b"some bytes!")?;
-    //let meta = f.metadata()?;
-    //println!("Permission: {:?}",meta.permissions().readonly());
-    //let mut perms = meta.permissions();
-    //perms.set_readonly(false);
-    //std::fs::set_permissions("Conf.toml",perms)?;
-
-    //println!("Permission: {:?}",meta.permissions().readonly());
-
-    //let x = c.to_toml_file(&mut f).unwrap();
-    // build an example toml file and go from there?
-    
-    // this matches correctly, need to figure out how to convert this into a usable conf
-    // possibly specify our own default in another function (or just main) if it fails to load or
-    // parse the file
-    // i.e. let conf = match (conf from file call)
-    //match conf {
-        //Ok(r) => println!("Did it! {:?}",r),
-        //Err(e) => println!("Nope!"),
-    //}
+    // Create a context from the given configuration
     let ctx = &mut Context::load_from_conf("rusty-rpg","varneryo",conf).unwrap();
    
     // Add CARGO_MANIFEST_DIR/resources to the filesystem path for context building and warmy
-    // conf.toml stored in the resouce directory for context building
     
     /*Adds resources folder in project dir to filesystem roots*/
     let cargo_path: Option<path::PathBuf> =
         option_env!("CARGO_MANIFEST_DIR").map(|env_path|{
            let mut res_path = path::PathBuf::from(env_path);
+           println!("Manifest path {:?}",res_path);
            res_path.push("resources");
+           println!("Cargo path {:?}",res_path);
            res_path
         });
+    println!("Cargo path {:?}",cargo_path);
+    println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
     // unwrap the path and add it to the context builder
     if let Some(ref s) = cargo_path {
-        //c_builder = c_builder.add_resource_path(s);
         ctx.filesystem.mount(s,true);
     }
-        
-        
-        
-    //if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
-    
-    //let mut path = path::PathBuf::from(manifest_dir);
-    //path.push("resources");
-    //c_builder = c_builder.add_resource_path(path);
-    
-    // Probably want to switch over to CB so we don't have to mount the filesystem
-    //let ctx = &mut c_builder.build().unwrap(); 
-    /*println!("Default path: {:#?}", ctx.filesystem);*/
+    println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
+    let mut testworld: world::World=world::World::new(ctx,cargo_path);
 
+    let key = warmy::FSKey::new("/test_map.jpg");
+    println!("Key {:?}",key.as_path());
+    let x = testworld.assets.get::<_, resources::Image>(&key,ctx)
+    .unwrap();
+    // Create the GGEZ MainState and actually start the game loop
     let main_state = &mut MainState::new(ctx).unwrap();
-    //creates a new entity in the system
-    //state.world.create_entity().with(components::Position {x: 1.0, y: 7.0}).build();
-
-    //let mut test_system = systems::TestSystem;
-    //test_system.run_now(&state.world.res);
-
-     // Actually starts the game loop 
     if let Err(e) = event::run(ctx,main_state){
     println!("Error encountered:{}",e);
     } else {

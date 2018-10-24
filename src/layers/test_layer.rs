@@ -29,7 +29,7 @@ impl TestLayer {
         //let opt = warmy::StoreOpt::default();
         //let mut store = warmy::Store::new(opt).expect("Could not create store");
          //following causes a panic on loading -> Figure out what path warmy actually wants
-        //let map2 = store.get::<_, resources::Image> (&warmy::FSKey::new("/resources/test_map.jpg"), ggez_ctx).unwrap();
+        //let map2 = store.get::<_, resources::Image> (&warmy::FSKey::new("C:\rust_projects\rusty-rpg\resources\test_map.jpg"), ggez_ctx).unwrap();
         TestLayer {
             dispatcher,
             image,
