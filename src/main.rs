@@ -65,24 +65,11 @@ impl MainState {
         // the MainState no longer owns the world
         //world.register::<components::Position> ();
 
-        // Old test renderings -> moved into layers
-        //let font = graphics::Font::new(ctx, "/DejaVuSerif.ttf", 48)?;
-        //let text = graphics::Text::new(ctx, "Hello World!", &font)?;
-        //let image = graphics::Image::new(ctx,"/tile.png").unwrap();
-        //let point = graphics::Point2::new(50.0,50.0);
-
         let s = MainState {
-            //text,
-            //canvas,
-            //image, 
-            //point,
-            /*draw_with_canvas : false,*/
-            frames: 0,
-            //world,
+           frames: 0,
             layers: layerstack,
-            //spritebatch: batch,
         };
-        Ok(s)   /* what does this do? */
+        Ok(s)
     }
 }
 
@@ -103,53 +90,7 @@ impl event::EventHandler for MainState {
         graphics::present(ggez_ctx);
         Ok(())
     } 
-/*    fn draw(&mut self, ctx: &mut Context) -> GameResult <()> {*/
-        //let dest_point = graphics::Point2::new(10.0, 10.0);
-        //graphics::set_canvas(ctx, None);
 
-        //// sets background color
-        //graphics::set_background_color(ctx, graphics::Color::from((64,64,0,0)));
-        //graphics::clear(ctx);
-
-        //// writes text to screen
-        //graphics::draw_ex(
-            //ctx,
-            //&self.text,
-            //graphics::DrawParam{
-                //dest: dest_point,
-                //color: Some(graphics::Color::from((0,0,0,255))),
-                //..Default::default()
-            //},
-        //)?;
-        //// draws a circle at a fixed point
-        //graphics::circle(
-            //ctx,
-            //graphics::DrawMode::Fill,
-            //graphics::Point2::new(200.0,300.0),
-            //100.0,
-            //0.1,
-        //)?;
-
-        //// draws the loaded image at a variable point
-        //graphics::draw_ex(
-            //ctx,
-            //&self.image,
-            //graphics::DrawParam{
-                //dest: self.point,
-                //..Default::default()
-                
-            //},
-        //)?;
-        //// displays FPS in console - work into display in a corner at some point
-        //graphics::present(ctx); 
-        //self.frames += 1;
-        //if (self.frames % 100) == 0 {
-            //println!("FPS: {}", ggez::timer::get_fps(ctx));
-        //}
-
-        //Ok(())
-    //}
-    
     /* switches canvas mode on keypress */
     fn key_down_event(&mut self, _ctx: &mut Context, keycode: Keycode, keymod: Mod, repeat: bool){
         println!(
@@ -203,21 +144,11 @@ pub fn main() -> std::io::Result<()> {
            println!("Cargo path {:?}",res_path);
            res_path
         });
-    println!("Cargo path {:?}",cargo_path);
-    println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
     // unwrap the path and add it to the context builder
     if let Some(ref s) = cargo_path {
         ctx.filesystem.mount(s,true);
     }
-    //println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
-    //let mut testworld: world::World=world::World::new(ctx,cargo_path);
-
-    //let key = warmy::FSKey::new("/test_map.jpg");
-    //println!("Key {:?}",key.as_path());
-    //let x = testworld.assets.get::<_, resources::Image>(&key,ctx)
-    //.unwrap();
-
-
+ 
     // Create the GGEZ MainState and actually start the game loop
     let main_state = &mut MainState::new(cargo_path,ctx).unwrap();
     if let Err(e) = event::run(ctx,main_state){
