@@ -10,7 +10,7 @@ use layer_stack::*;
 use layers::*;
 use resources;
 use systems::TestSystem;
-
+use map;
 
 pub struct TestLayer{
     dispatcher: specs::Dispatcher<'static, 'static>,
@@ -24,7 +24,7 @@ impl TestLayer {
         let dispatcher = Self::register_systems();
         let image = graphics::Image::new(ggez_ctx,"/tile.png").unwrap();
         let map = graphics::Image::new(ggez_ctx,"/test_map.jpg").unwrap();
-        
+        //let map2 = map::Map::new(ggez_ctx, world); 
          
         //let opt = warmy::StoreOpt::default();
         //let mut store = warmy::Store::new(opt).expect("Could not create store");

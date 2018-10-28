@@ -26,6 +26,7 @@ mod layer_stack;
 mod layers;
 mod resources;
 mod world;
+mod map;
 
 //use layers::test_layer;
 
@@ -39,7 +40,7 @@ struct MainState {
     // Permanent Members
     // Refactor specs world into a world struct
     //world: specs::World,
-    layers: layers::MyLayerStack,
+    layers: layers::WLayerStack,
     //draw_with_canvas: bool,
     //spritebatch: graphics::spritebatch::SpriteBatch,
 }
@@ -47,15 +48,20 @@ struct MainState {
 
 impl MainState {
     /* Creates a new main layer from a given co:ntext - look into return type*/
-    fn new(ctx: &mut Context) -> GameResult<MainState> {
+    fn new(resource_dir: Option<path::PathBuf>, ctx: &mut Context) -> GameResult<MainState> {
     //fn new(ctx: &mut Context) -> Self{
         // creates a world and registeres the position component to it - a system can now act on
         // it - How do we get the data to use?
         let mut world = World::new();
+        let mut my_world = world::World::new(ctx,resource_dir.clone());
         // Moves the world to the layer_stack
-        let mut layerstack = layers::MyLayerStack::new(world);
-        let initial_layer = Box::new(layers::test_layer::TestLayer::new(ctx,&mut layerstack.world));
-        layerstack.push(initial_layer);
+        let mut layerstack = layers::WLayerStack::new(my_world);
+        
+        //let initial_layer = Box::new(layers::test_layer::TestLayer::new(ctx,&mut layerstack.world));
+        //layerstack.push(initial_layer);
+        
+        let game_layer = Box::new(layers::game_layer::GameLayer::new(ctx,&mut layerstack.world));
+        layerstack.push(game_layer);
         // the MainState no longer owns the world
         //world.register::<components::Position> ();
 
@@ -203,15 +209,17 @@ pub fn main() -> std::io::Result<()> {
     if let Some(ref s) = cargo_path {
         ctx.filesystem.mount(s,true);
     }
-    println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
-    let mut testworld: world::World=world::World::new(ctx,cargo_path);
+    //println!("Resource Directory:{:?}",ctx.filesystem.get_resources_dir().to_owned());
+    //let mut testworld: world::World=world::World::new(ctx,cargo_path);
 
-    let key = warmy::FSKey::new("/test_map.jpg");
-    println!("Key {:?}",key.as_path());
-    let x = testworld.assets.get::<_, resources::Image>(&key,ctx)
-    .unwrap();
+    //let key = warmy::FSKey::new("/test_map.jpg");
+    //println!("Key {:?}",key.as_path());
+    //let x = testworld.assets.get::<_, resources::Image>(&key,ctx)
+    //.unwrap();
+
+
     // Create the GGEZ MainState and actually start the game loop
-    let main_state = &mut MainState::new(ctx).unwrap();
+    let main_state = &mut MainState::new(cargo_path,ctx).unwrap();
     if let Err(e) = event::run(ctx,main_state){
     println!("Error encountered:{}",e);
     } else {

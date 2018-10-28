@@ -7,7 +7,7 @@
  * 1) Imlement the PDA with a basic layer structure
  * 2) Build a test layer to display a background image
  * 3) Start a new layer with a key press (stack push)
- * 4) Return to the first layer with a key press (stack pop)
+ * 4) Return to the first layer withth a key press (stack pop)
 */
 
 use ggez;
