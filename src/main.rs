@@ -2,6 +2,7 @@ extern crate ggez;
 extern crate specs;
 extern crate warmy;
 extern crate failure;
+extern crate nalgebra;
 
 use ggez::conf;
 /*use ggez::event;*/
@@ -27,6 +28,7 @@ mod layers;
 mod resources;
 mod world;
 mod map;
+mod camera;
 
 //use layers::test_layer;
 

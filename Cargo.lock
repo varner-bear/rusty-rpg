@@ -1273,6 +1273,7 @@ version = "0.1.0"
 dependencies = [
  "failure 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "ggez 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nalgebra 0.14.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "specs 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "warmy 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
