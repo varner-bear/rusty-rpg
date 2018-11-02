@@ -4,16 +4,21 @@ use ggez::graphics;
 use layers::*;
 use map::Map;
 use world::World;
+use camera::Camera;
 
 pub struct GameLayer{
-    map: Map
+    map: Map,
+    camera: Camera,
+
 }
 
 impl GameLayer {
     pub fn new(ggez_ctx: &mut ggez::Context, world: &mut World) -> Self {
-      let map = Map::new(ggez_ctx, world); 
+      let map = Map::new(ggez_ctx, world);
+      let camera = Camera::new(&map);
         GameLayer{
             map,
+            camera,
         }
     }
 }
@@ -27,17 +32,18 @@ impl Layer<World, i32> for GameLayer {
         ggez::GameResult<()> {
             graphics::set_background_color(ggez_ctx, graphics::Color::from((30,30,30,0)));
             graphics::clear(ggez_ctx);
-            graphics::draw_ex(
-                ggez_ctx,
-                // the borrows the resource for rendering and unwrapes our custom image wraper
-                &self.map.image_res.borrow().0,
-                // will probably want to rework this into a map draw function
-                graphics::DrawParam{
-                    dest: graphics::Point2::new(1.0,1.0),
-                    scale: graphics::Point2::new(1.0,1.0),
-                    ..Default::default()
-                },
-            )?;
+            self.map.draw(ggez_ctx,&self.camera);
+            
+            //graphics::draw_ex(
+                //ggez_ctx,
+                 //the borrows the resource for rendering and unwrapes our custom image wraper
+                //&self.map.image_res.borrow().0,
+                //graphics::DrawParam{
+                    //dest: graphics::Point2::new(1.0,1.0),
+                    //scale: graphics::Point2::new(1.0,1.0),
+                    //..Default::default()
+                //},
+            //)?;
             Ok(())
         }
 
