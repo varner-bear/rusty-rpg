@@ -15,7 +15,7 @@ pub struct GameLayer{
 impl GameLayer {
     pub fn new(ggez_ctx: &mut ggez::Context, world: &mut World) -> Self {
       let map = Map::new(ggez_ctx, world);
-      let camera = Camera::new(&map);
+      let camera = Camera::new(ggez_ctx, &map);
         GameLayer{
             map,
             camera,
