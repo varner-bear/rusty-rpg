@@ -1,6 +1,6 @@
 (
-  title: "rusty-rpg",
-  dimensions: None,
+  title: "Varner's RPG Engine!",
+  dimensions: Some((700,500)),
   max_dimensions: None,
   min_dimensions: None,
   fullscreen: false,

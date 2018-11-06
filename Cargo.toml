@@ -8,6 +8,7 @@ ggez = "0.4"
 specs = "0.12.1"
 warmy = "0.10.0"
 nalgebra = "0.14"
+amethyst = "0.9"
 
 # Utility testing
 failure = "0.1"
