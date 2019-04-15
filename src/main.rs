@@ -1,13 +1,12 @@
 extern crate amethyst;
 
 use amethyst::prelude::*;
-use amethyst::renderer::{DisplayConfig, DrawSprite, Event, Pipeline,
-                         RenderBundle, Stage, VirtualKeyCode};
-pub struct GameLayer;
+use amethyst::renderer::{DisplayConfig, DrawSprite, Pipeline,
+                         RenderBundle, Stage};
 
-impl<'a,'b> SimpleState<'a, 'b> for GameLayer{
-    
-}
+mod layers;
+
+use layers::game_layer::GameLayer;
 
 fn main() -> amethyst::Result<()> {
     
