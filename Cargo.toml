@@ -2,12 +2,7 @@
 name = "rusty-rpg"
 version = "0.1.0"
 authors = []
-build = "build.rs"
 [dependencies]
-ggez = "0.4"
-specs = "0.12.1"
-warmy = "0.10.0"
-nalgebra = "0.14"
+quicksilver = "*"
 
 # Utility testing
-failure = "0.1"
