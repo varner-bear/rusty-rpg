@@ -27,3 +27,6 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
+static/mononoki-Regular.ttf
+*.zip
+static/test_map.jpg
